@@ -1,0 +1,14 @@
+ARG baseimageversion=10
+FROM quay.io/centos/centos:${baseimageversion}
+RUN yum -y install httpd unzip
+ARG APP_VERSION=1.0.0
+ENV APP_VERSION=${APP_VERSION}
+EXPOSE 80
+ADD templatemo_634_lantern_river.zip /opt
+WORKDIR /opt
+RUN unzip templatemo_634_lantern_river.zip
+RUN cp -r templatemo_634_lantern_river/* /var/www/html/
+RUN chown apache:apache /etc/httpd/logs/error_log
+RUN echo "ServerName localhost" >>/etc/httpd/conf/httpd.conf
+USER apache
+CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
