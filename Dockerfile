@@ -8,7 +8,7 @@ ADD templatemo_634_lantern_river.zip /opt
 WORKDIR /opt
 RUN unzip templatemo_634_lantern_river.zip
 RUN cp -r templatemo_634_lantern_river/* /var/www/html/
-RUN chown -R apache:apache /etc/httpd/logs/
+RUN chown -R apache:apache /var/www/html/ /etc/httpd/logs/ /run/httpd
 RUN echo "ServerName localhost" >>/etc/httpd/conf/httpd.conf
 USER apache
 CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
