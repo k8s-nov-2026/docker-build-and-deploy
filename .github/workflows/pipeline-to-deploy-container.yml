@@ -21,15 +21,15 @@ jobs:
       - name: Azure login
         uses: azure/login@v3
         with:
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
       - name: Acr login
         uses: azure/docker-login@v2
         with:
           login-server: 'digifrontend.azurecr.io' # default: index.docker.io
           username: 'digifrontend'
-          password: ${{ vars.REG_PASSWORD }}
+          password: ${{ secrets.REG_PASSWORD }}
       - name: Build the image
         run: |
           docker build -t digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}} .
@@ -41,22 +41,22 @@ jobs:
       - name: Azure login
         uses: azure/login@v3
         with:
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
       - name: Acr login
         uses: azure/docker-login@v2
         with:
           login-server: 'digifrontend.azurecr.io' # default: index.docker.io
           username: 'digifrontend'
-          password: ${{ vars.REG_PASSWORD }}
+          password: ${{ secrets.REG_PASSWORD }}
 
       - name: Login into virtual machine and deploy container
         uses: appleboy/ssh-action@v1
         with:
           host: "20.109.28.174"
           username: "azureuser"
-          password: ${{ vars.PASSWORD }}
+          password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
             docker pull digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}}
