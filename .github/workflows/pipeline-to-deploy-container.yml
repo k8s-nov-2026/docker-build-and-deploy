@@ -50,6 +50,8 @@ jobs:
     needs: Build_docker_container_into_vm
     runs-on: ubuntu-latest
     steps:
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v5
       - name: Azure login
         uses: azure/login@v3
         with:
