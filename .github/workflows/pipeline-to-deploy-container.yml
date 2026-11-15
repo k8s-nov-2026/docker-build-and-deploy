@@ -1,0 +1,66 @@
+name: Deploy app as container
+run-name: "Build and deploy docker container on vm"
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  Build_docker_container_into_vm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout_code
+        uses: actions/checkout@v7
+        with:
+          ref: main
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v5
+      - name: Azure login
+        uses: azure/login@v3
+        with:
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+      - name: Acr login
+        uses: azure/docker-login@v2
+        with:
+          login-server: 'digifrontend.azurecr.io' # default: index.docker.io
+          username: 'digifrontend'
+          password: ${{ vars.REG_PASSWORD }}
+      - name: Build the image
+        run: |
+          docker build -t digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}} .
+          docker push digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}}
+
+  Deploy_container_into_vm:
+    runs-on: ubuntu:latest
+    steps:
+      - name: Azure login
+        uses: azure/login@v3
+        with:
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+      - name: Acr login
+        uses: azure/docker-login@v2
+        with:
+          login-server: 'digifrontend.azurecr.io' # default: index.docker.io
+          username: 'digifrontend'
+          password: ${{ vars.REG_PASSWORD }}
+
+      - name: Login into virtual machine and deploy container
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ 20.109.28.174 }}
+          username: "azureuser"
+          password: ${{ vars.PASSWORD }}
+          port: 22
+          script: |
+            docker pull digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}}
+            docker run -it -d --name webapp_http -p 80:80 digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}}
+
+
+
