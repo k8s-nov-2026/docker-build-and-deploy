@@ -76,6 +76,7 @@ jobs:
             sudo service docker start
             sudo docker login digifrontend.azurecr.io --username digifrontend --password ${{ secrets.REG_PASSWORD }}
             sudo docker pull digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}}
+            sudo docker rm -f webapp_http
             sudo docker run -it -d --name webapp_http -p 80:80 digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}}
 
 
