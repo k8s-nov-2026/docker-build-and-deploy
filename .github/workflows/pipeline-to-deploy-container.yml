@@ -47,6 +47,7 @@ jobs:
 #            docker run -it -d --name webapp_http -p 80:80 digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}}
 
   Deploy_container_into_vm:
+    needs: Build_docker_container_into_vm
     runs-on: ubuntu-latest
     steps:
       - name: Azure login
@@ -67,7 +68,7 @@ jobs:
         with:
           host: "20.109.28.174"
           username: "azureuser"
-          password: ${{ secrets.PASSWORD }}
+          password: ${{ secrets.VM_PASSWORD }}
           port: 22
           script: |
             docker pull digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}}
