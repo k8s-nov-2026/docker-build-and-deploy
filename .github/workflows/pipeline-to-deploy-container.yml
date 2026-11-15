@@ -47,7 +47,7 @@ jobs:
 #            docker run -it -d --name webapp_http -p 80:80 digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}}
 
   Deploy_container_into_vm:
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-latest
     steps:
       - name: Azure login
         uses: azure/login@v3
