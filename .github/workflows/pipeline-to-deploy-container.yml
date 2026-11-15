@@ -33,7 +33,18 @@ jobs:
       - name: Build the image
         run: |
           docker build -t digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}} .
-          docker push digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}}
+          docker push digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}}     
+
+#      - name: Login into virtual machine and deploy container
+#        uses: appleboy/ssh-action@v1
+#        with:
+#          host: "20.109.28.174"
+#          username: "azureuser"
+#          password: ${{ secrets.PASSWORD }}
+#          port: 22
+#          script: |
+#            docker pull digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}}
+#            docker run -it -d --name webapp_http -p 80:80 digifrontend.azurecr.io/digifrontend/webapp-test:${{github.sha}}
 
   Deploy_container_into_vm:
     runs-on: ubuntu:latest
